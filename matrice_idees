@@ -1,3 +1,0 @@
-alignes = new Array("Nom1","Nom2","Nom3");
-  acolonnes= new Array(1,2,3,4,5,6,7,"label");
-  matrice = new Array(alignes,acolonnes);
