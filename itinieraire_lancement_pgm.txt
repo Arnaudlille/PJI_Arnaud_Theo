@@ -1,1 +1,1 @@
- shiny::runApp("C:/Users/HP/Desktop/Semestre_2/pji/2018-01-22-canevas-nuage")
+ shiny::runApp("C:/Users/HP/Desktop/Semestre_2/pji/2018-01-26-canevas-nuage")
