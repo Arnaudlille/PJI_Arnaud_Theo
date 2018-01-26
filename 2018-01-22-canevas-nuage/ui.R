@@ -14,6 +14,7 @@ shinyUI(pageWithSidebar(
     includeHTML("js/d3.min.js"),
     includeHTML("js/hexbin.js"),
     includeHTML("graphs.html"),
-    HTML(paste0('<div id="thePlot" class=\"shiny-hist\"><svg /></div>'))
+	HTML(paste0('<div id="thePlot" class=\"shiny-hist\"><svg /></div>'))
+
   )
 ))

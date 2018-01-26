@@ -25,23 +25,33 @@
 </head>
 
 <header>
-  <h4 id="grid-ref"></h4>
+ <h4 id="grid-ref"></h4>
 </header>
 
 <section id='grid'></section>
 
 <script>
 
+
+/* COMPRENDRE LES METHODES DE CHAQUE  CLASSE
+
+SI ELLLES SONT EXPLICITES SINON AFFRONDIR */
+
 var histOutputBinding = new Shiny.OutputBinding();
 
   $.extend(histOutputBinding, {
     find: function(scope) {
-      return $(scope).find('.shiny-hist');
+      return $(scope).find('.shiny-hist'); // on selectionne la classe
+	  
+	  //shiny-hist ui.R  destinée à afficher l'histogramme
     },
     renderValue: function(el, data) {
     //remove the old graph
 	document.getElementById("grid").innerHTML = ""; 
 	if(data == null ) {return;}
+	
+	
+	 // on recupere les attributs de la donnée data du fichier server.R	
 	
 	var nbRows=data.gridInfo.nbLines;
 	var nbColumns=data.gridInfo.nbColumns;
@@ -55,12 +65,15 @@ var histOutputBinding = new Shiny.OutputBinding();
 	var batonNormalizedValues = data.batonNormalizedValues;
 	var batonRealValues = data.batonRealValues;
 	var cellSize=data.sizeInfo;
-	var w = cellSize*nbColumns;
+	
+	// combre de lignes et colonnes de l'hexagone  de data
+	
+	var w = cellSize*nbColumns;   
 	var h = cellSize*nbRows;
 
-	document.getElementById("grid-ref").style.textAlign = "center";
+	document.getElementById("grid-ref").style.textAlign = "";
 
-	if(topology.localeCompare('rectangular')==0){
+	 if(topology.localeCompare('rectangular')==0){
 		d3.select('#grid-ref').text(function () {
 			if(isHist){
 				return 'Square Grid : Histogramme';
@@ -83,11 +96,11 @@ var histOutputBinding = new Shiny.OutputBinding();
 	function barOrHistoSquareSizeGrid(){
 
 		var svg = d3.select('#grid').append('svg')
-			.attr("style"," display:block; margin:auto; margin-top:30px; background-color:blue")
+			.attr("style"," display:block; margin:auto; margin-top:70px; background-color:blue")
 			.attr({
-				width: w,
-				height: h
-		});
+				width: 600,
+				height: 600
+		}); 
 
 		document.getElementById("grid-ref").style.textAlign = "center";
 		
@@ -171,7 +184,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 					d3.select('#grid-ref').text(function () {
 						var ch = 'row: ' + (n + 1) + ' | ' + 'column: ' + (i + 1) + ' | ' + 'superclasse : ' + superclass[(n*nbColumns)+i];
 						return ch;
-						});
+						}); // lorsqu'on pointe le curseur sur la ligne de l'hexagone
 						
 					var el = d3.select(this)
 						.transition()
@@ -190,7 +203,11 @@ var histOutputBinding = new Shiny.OutputBinding();
 					d3.select('#grid-ref').text(function () { 
 						var ch=label[i]+": " + d.data.realValue;
 						return ch;	
-					});
+					});  // pointage de la  souris sur une  barre 
+					
+					   // le label provenant de data.label
+					   
+					   // ainsi que  data.realValue  sont affichés
 						
 					console.log(bars[0]);
 					
@@ -206,6 +223,11 @@ var histOutputBinding = new Shiny.OutputBinding();
 						.duration(50)
 						.attr("stroke","none");
 				});	
+				
+				// les données data generées aleatoirement sont
+				
+				// dans server.R et  les données pour les nuages de points
+				// seront dedans également
 			}
 		});
 	}
