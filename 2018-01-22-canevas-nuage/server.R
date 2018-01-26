@@ -24,7 +24,7 @@ shinyServer(function(input, output) {
       superclass=superclass, 
       superclassColor=superclassColor,
       # Sortie spécifique au nuage de points
-      #nuageData=nuageDat(),
+      nuageData=nuageDat(),
       # Sorties spécifiques au bâtons (à supprimer)
       nbBatons=nbBatons,
       isHist=isHist, 
