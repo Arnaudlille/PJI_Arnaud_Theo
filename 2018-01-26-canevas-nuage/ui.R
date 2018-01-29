@@ -13,7 +13,7 @@ shinyUI(pageWithSidebar(
     includeHTML("js/lodash.min.js"),
     includeHTML("js/d3.min.js"),
     includeHTML("js/hexbin.js"),
-    includeHTML("graphs.html"),
+    includeHTML("graphs_point.html"),
     HTML(paste0('<div id="thePlot" class=\"shiny-hist\"><svg /></div>'))
   )
 ))

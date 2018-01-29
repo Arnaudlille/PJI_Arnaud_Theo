@@ -1,1 +1,3 @@
- shiny::runApp("C:/Users/HP/Desktop/Semestre_2/pji/2018-01-26-canevas-nuage")
+setwd(dir="C:/Users/HP/Desktop/Semestre_2/pji/2018-01-26-canevas-nuage")
+install.packages("shiny")
+shiny::runApp("C:/Users/HP/Desktop/Semestre_2/pji/2018-01-26-canevas-nuage")
