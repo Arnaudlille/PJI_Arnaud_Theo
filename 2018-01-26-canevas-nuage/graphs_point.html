@@ -330,7 +330,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 			
 			g.append("g")
 				.call(xAxe)
-				.attr("transform", "translate("+ -(cellSize-99.8) +","+ 0+")" );
+				.attr("transform", "translate("+ -(cellSize-100) +","+ 0+")" );
 			
 			g.append("g")
 				.call(yAxe)
@@ -359,15 +359,42 @@ var histOutputBinding = new Shiny.OutputBinding();
 					return 5;
 				})
 				.style("fill", "grey")
-				//.attr('transform', 'translate(' + (coordinatesArray[nuageData.cell[indice]-1].x-cellSize/2) + ',' + (coordinatesArray[nuageData.cell[indice]-1].y) + ')')
-				.on('mouseenter', function () {
-					d3.select('#grid-ref').text(function () { 
-						var ch=nuageData.label[indice]+": " + nuageData.x[indice] + " ; " + nuageData.y[indice];
-						return ch;	
-					})
-				})
 				
+				.attr("transform", "translate(" + (coordinatesArray[indice].x-
+				(cellSize/2)) + 
+				',' + (coordinatesArray[indice].y) + ')' )
+				
+				/*
+				.attr('transform', 'translate(' + 
+				(coordinatesArray[nuageData.cell[indice]-1].x-cellSize/2) + ','
+				+ (coordinatesArray[nuageData.cell[indice]-1].y) + ')') */
+				
+				
+			 
+					d3.selectAll("circle")
+    .on("mouseover", function(d,i) {  // i permet de parcourrir le nuagedata
+	
+	d3.select('#grid-ref').text(function () {
+					
+					var ch = nuageData.x[i] + ' '+nuageData.y[i];
+					return ch;
+					});
+	
+	
+	//alert( nuageData.x[i] + ' '+nuageData.y[i]);
+
+
+	})
+    
+				
+				
+			 	
+	
+				
+			
 		}
+		
+		
 				/*		
 		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
 					
