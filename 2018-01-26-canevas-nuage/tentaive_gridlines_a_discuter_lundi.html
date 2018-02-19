@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<style>
+.chart rect {
+  stroke: white;
+  fill-opacity: .6;
+  fill: steelblue;
+
+}
+.bar.positive {
+  fill: steelblue;
+}
+
+.bar.negative {
+  fill: brown;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+
+	</style>
+	
+	<script type="text/javascript">
+	
+	
+	var url="https://gist.githubusercontent.com/d3byex/520e6dcb30e673c149cc/raw/432623f00f6740021bdc13141612ac0b6196b022/corr_aapl_msft.csv";
+	
+	d3.csv(url,function(error,rawData){
+	
+	var data=rawData.map(function(d){
+	
+
+	
+	  return {x: +d.AAPL, y: +d.MSFT}
+	  
+	  });
+	  
+	  
+	 
+	  
+	  var xExtents=d3.extent(data,function(d){ return d.x;});
+	  
+	  
+	  var yExtents=d3.extent(data,function(d){ return d.y;});
+	  
+	  
+	  var maxExtent=d3.max(xExtents.concat(yExtents),
+	  function(d){  return Math.abs(d);
+	  });
+	
+	 var graphwidth=400;
+	 
+	 var  graphheight=400;
+	 
+	 var radius=5;
+	 
+	 
+	 var scale=d3.scale.linear()
+	 .domain([-maxExtent,maxExtent])
+	 .range([0,graphwidth]); 
+	 
+	 
+	 
+	 
+	var svg=d3.select('body').append('svg')
+	.attr('width',graphwidth)
+	.attr('height',graphheight);
+	
+
+	
+	
+	/*
+	svg.selectAll('circle')
+	.data(data)
+	.enter()
+	.append('circle')
+	.attr({
+	
+	cx:function(d){  return xScale(d.AAPL);},
+	cy:function(d){return yScale(d.MSFT);},
+	r:radius,
+	fill:'steelblue'
+	}); */
+	
+	var yGridlinesAxis=d3.svg.axis().scale(scale).orient('left');
+	
+	var margins = {top: 20, right: 10, bottom: 20, left: 10};
+	
+	
+	var axisPadding=20;
+		
+	var yGridlineNodes=svg.append('g')
+	.attr('transform','translate('+(margins.left+graphwidth)
+	+','+margins.top+')').call(yGridlinesAxis.tickSize(
+	graphwidth+axisPadding,0,0)
+	.tickFormat(""));
+	
+	
+	var totalHeight=40;
+	
+
+		
+	var xGridlinesAxis=d3.svg.axis().scale(scale).orient('bottm');
+	
+	
+	var xGridlineNodes=svg.append('g')
+	.attr('transform','translate('+(margins.left+graphwidth)
+	+','+margins.top+')').call(yGridlinesAxis.tickSize(
+	graphwidth+axisPadding,0,0)
+	.tickFormat(""));
+	
+	
+	/*
+	
+	var xGridlineNodes=svg.append('g')
+	.attr('transform','translate('+(margins.left
+	+','+(totalHeight-margins.bottom+axisPadding)
+	+')')
+	.call(xGridlinesAxis.tickSize(-graphwidth-
+	axisPadding,0,0)
+	.tickFormat(""));  */
+	
+	
+	styleGridlineNodes(xGridlineNodes);
+
+	
+	//styleGridlineNodes(yGridlineNodes);
+	
+	function styleGridlineNodes(axisNodes){
+	
+	
+	axisNodes.selectAll('.domain')
+	.attr({
+	fill:'none',
+	stroke:'none'});
+	
+		
+	axisNodes.selectAll('.tick line')
+	.attr({
+	fill:'none',
+	'stroke-width':1,
+	 stroke:'lightgray'
+	
+	});
+	
+	
+	}
+	
+	
+	});
+	
+	
+	
+	
+
+	
+	
+	
+	
+	</script>
+</head>
+<body>
+	
+
+</body>
+</html>
