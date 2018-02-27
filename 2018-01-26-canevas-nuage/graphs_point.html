@@ -359,17 +359,28 @@ var histOutputBinding = new Shiny.OutputBinding();
 				.domain([d3.min(nuageData.x),d3.max(nuageData.x)])
 				.range([0,width/2 +10])
 				
+				
+			
+				
 		var xAxe = d3.svg.axis()
                   .scale(echelleX)
 				  .tickSize(1)
 				  .ticks(4)
-                  .orient("bottom");
+                  .orient("bottom")
+				  .tickFormat(d3.format("d"))
+        .innerTickSize(-56);
+				  
+				  
+		
 				  
 		var yAxe = d3.svg.axis()
                  .scale(echelleY)
 				  .tickSize(1)
 				  .ticks(4)
-                  .orient("left");
+                  .orient("left")
+				 
+        .innerTickSize(-6);
+				  
 				  
 		
 				  
@@ -389,7 +400,9 @@ var histOutputBinding = new Shiny.OutputBinding();
 			var g=d3.select("#gcircle" +(indice+1));
 			
 		
-     
+  
+	 
+	 // 
 			
 			g.append("g")
 			.attr("class", "x axis")
