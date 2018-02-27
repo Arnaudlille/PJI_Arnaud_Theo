@@ -367,8 +367,9 @@ var histOutputBinding = new Shiny.OutputBinding();
 				  .tickSize(1)
 				  .ticks(4)
                   .orient("bottom")
-				  .tickFormat(d3.format("d"))
-        .innerTickSize(-56);
+				
+				 
+        .innerTickSize(-height); // preparation  de gridlines
 				  
 				  
 		
@@ -378,8 +379,9 @@ var histOutputBinding = new Shiny.OutputBinding();
 				  .tickSize(1)
 				  .ticks(4)
                   .orient("left")
+	
 				 
-        .innerTickSize(-6);
+        .innerTickSize(-width);
 				  
 				  
 		
@@ -405,12 +407,13 @@ var histOutputBinding = new Shiny.OutputBinding();
 	 // 
 			
 			g.append("g")
-			.attr("class", "x axis")
+			.attr("class", "x axis") // permet de tracer
 				.call(xAxe)
 				.attr("transform", "translate("+ 0 +","+ (width/2 +10) +")" );
 	
 	
 			g.append("g")  
+			.attr("class", "y axis")// permet de tracer
 
 				.call(yAxe);
 	

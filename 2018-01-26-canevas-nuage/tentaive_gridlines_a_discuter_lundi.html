@@ -1,91 +1,98 @@
-<!DOCTYPE html>
-<html>
-    <meta charset=utf-8>
+<!doctype html>
+<html lang="ja">
 <head>
-    <meta name="description" content="D3.js v4, .csv, .map, .scaleLinear,
-                                     .axisLeft, .axisBottom, scatter plot
-                                     with gridlines" />
+  <meta charset="UTF-8">
+  <title>Line Chart</title>
+<style>
+
+  .axis path,
+  .axis line{
+    fill: none;
+    stroke: black;
+  }
+
+  .line{
+    fill: none;
+    stroke: blue;
+    stroke-width: 2px;
+  }
+
+  .tick text{
+    font-size: 12px;
+  }
+
+  .tick line{
+    opacity: 0.2;
+  }
+
+</style>
 </head>
 <body>
-    <script src="http://d3js.org/d3.v4.min.js"></script>
-    <script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
-    <script>
-        var url = "https://gist.githubusercontent.com/d3byex/520e6dcb30e673c149cc/raw/432623f00f6740021bdc13141612ac0b6196b022/corr_aapl_msft.csv";
-        d3.csv(url, function (error, rawData) {
-            var data = rawData.map(function (d) {
-                return { X: +d.AAPL, Y: +d.MSFT } // Apple, Microsoft
-            });
-            var xExtents = d3.extent(data, function (d) { return d.X; });
-            var yExtents = d3.extent(data, function (d) { return d.Y; });
-            var maxExtent = d3.max(
-              xExtents.concat(yExtents), function (d) { return Math.abs(d); });
-            var graphWidth = 400, graphHeight = 400;
-            var radius = 5;
-            var margins = { left: 50, top: 50, right: 50, bottom: 50 };
-            var axisPadding = 3;
-            var totalHeight = graphHeight + margins.top + margins.bottom;
-            var totalWidth = graphWidth + margins.left + margins.right;
-            var scale = d3.scaleLinear()
-                          .domain([-maxExtent, maxExtent])
-                          .range([0, graphWidth]);
-            var svg = d3.select('body')
-                        .append('svg')
-                        .attrs({width: totalWidth, height: totalHeight});
-            var yGridlinesAxis = d3.axisLeft()
-                                   .scale(scale);
-            var yGridlineNodes = svg.append('g')
-                                    .attr('transform',
-          'translate(' + (margins.left + graphWidth) + ',' + margins.top + ')')
-                                    .call(yGridlinesAxis
-                     .tickSize(graphWidth + axisPadding, 0, 0).tickFormat(""));
-            styleGridlineNodes(yGridlineNodes);
-            var xGridlinesAxis = d3.axisBottom()
-                                   .scale(scale);
-            var xGridlineNodes = svg.append('g')
-                                    .attr('transform',
-'translate(' + margins.left + ',' + (totalHeight - margins.bottom + axisPadding) + ')')
-.call(xGridlinesAxis.tickSize(-graphWidth - axisPadding, 0, 0).tickFormat(""));
-            styleGridlineNodes(xGridlineNodes);
-            var xAxis = d3.axisBottom().scale(scale);
-            var yAxis = d3.axisLeft().scale(scale);
-            var yAxisNodes = svg.append('g')
-                                .attr('transform',
-         'translate(' + (margins.left - axisPadding) + ',' + margins.top + ')')
-                                .call(yAxis);//.attr("class", "x axis");
-            styleAxisNodes(yAxisNodes);
-            var xAxisNodes = svg.append('g')
-                                .attr('transform',
-'translate(' + margins.left + ',' + (totalHeight - margins.bottom + axisPadding) + ')')
-                                .call(xAxis);
-            styleAxisNodes(xAxisNodes);
-            var graphGroup = svg.append('g')
-                                .attr('transform',
-                        'translate(' + margins.left + ',' + margins.top + ')');
-            graphGroup.selectAll('circle')
-                      .data(data)
-                      .enter()
-                      .append('circle')
-                      .attrs({cx: function (d) { return scale(d.X); },
-                              cy: function (d) { return scale(d.Y); },
-                              r: radius, fill: 'none', stroke: 'steelblue'});
-        }); // d3.csv
-        // gridlines
-        function styleGridlineNodes(axisNodes) {
-                 axisNodes.selectAll('.domain')
-                          .attrs({fill: 'none', stroke: 'none' });
-                 axisNodes.selectAll('.tick line')
-                          .attrs({fill: 'none', 'stroke-width': 1,
-                                  stroke: 'lightgray'});
-        }
-        // ticks
-        function styleAxisNodes(axisNodes) {
-                 axisNodes.selectAll('.domain')
-                          .attrs({fill: 'none', 'stroke-width': 1,
-                                  stroke: 'black'});
-                 axisNodes.selectAll('.tick line')
-                          .attrs({fill: 'none', 'stroke-width': 1,
-                                  stroke: 'black'});
-        }
-    </script>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script>
+
+var margin = {top: 20, right: 100, bottom: 30, left: 100},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var dataset = [
+  {x: 0, y: 5},
+  {x: 1, y: 8},
+  {x: 2, y: 13},
+  {x: 3, y: 12},
+  {x: 4, y: 16},
+  {x: 5, y: 21},
+  {x: 6, y: 18},
+  {x: 7, y: 23},
+  {x: 8, y: 24},
+  {x: 9, y: 28},
+  {x: 10, y: 35},
+  {x: 11, y: 30},
+  {x: 12, y: 32},
+  {x: 13, y: 36},
+  {x: 14, y: 40},
+  {x: 15, y: 38},
+];
+
+var xScale = d3.scale.linear()
+    .domain([0, d3.max(dataset, function(d){ return d.x; })])
+    .range([0, width]);
+
+var yScale = d3.scale.linear()
+    .domain([0, d3.max(dataset, function(d){ return d.y; })])
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom")
+    .innerTickSize(-height);
+   
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("right")
+    .innerTickSize(-width);
+    
+
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+
+
+</script>
 </body>
 </html>
