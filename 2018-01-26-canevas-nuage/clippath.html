@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.min.js"></script>
+</head>
+<body>
+  <div id="chart">
+  </div>
+  <script type="text/javascript">
+  var w = 800,
+      h = 600,
+      margin = 25;
+    
+var drag = d3.behavior.drag()
+    .on("drag", function() {
+        var clippy = d3.select('#clip circle');
+        clippy.attr('cx', +clippy.attr('cx') + d3.event.dx);
+        clippy.attr('cy', +clippy.attr('cy') + d3.event.dy);
+    });
+
+  var svg = d3.select("#chart")
+    .append("svg:svg")
+      .attr("width", w + 2*margin)
+      .attr("height", h + 2*margin)
+    .append('g')
+      .attr('transform', 'translate('+margin+','+margin+')');
+
+  var clip = svg.append("svg:clipPath")
+      .attr("id", "clip")
+    
+	.append("svg:ellipse")          // shape it as an ellipse
+    .attr("cx", 175)         // position the x-centre
+    .attr("cy", 100)         // position the y-centre
+    .attr("rx", 100)         // set the x radius
+    .attr("ry", 50);         // set the y radius
+
+     
+
+ svg.append('svg:rect')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('rx', 15)
+      .attr('ry', 15)
+      .attr("clip-path", function(d,i) { return "url(#clip)"; })
+      .style("fill", d3.rgb(230, 230, 230))
+      .style("stroke", d3.rgb(150, 150, 150));
+ 
+    
+  </script>
+</body>
+</html>
