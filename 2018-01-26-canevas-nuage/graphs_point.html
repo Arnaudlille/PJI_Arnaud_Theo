@@ -448,6 +448,10 @@ var histOutputBinding = new Shiny.OutputBinding();
 					return nuageData.x[indice]  ;
 				})
 				
+				.attr("hexa",function(){
+					return nuageData.cell[indice]  ;
+				})
+				
 				.attr("y",function(){
 					return nuageData.y[indice]  ;
 				})
@@ -461,6 +465,60 @@ var histOutputBinding = new Shiny.OutputBinding();
 				
 				alert(d3.select(this).attr("x")
 				+"   "+d3.select(this).attr("y"));
+				
+				
+				alert(d3.select(this).attr("hexa")
+				);
+	 var w = 800,
+      h = 600,
+      margin = 25;
+	  
+	  d3.select("#gcircle" + d3.select(this).attr("hexa")).append("svg:clipPath")
+      .attr("id", "clip")
+    .append("svg:circle")
+      .attr('cx', 80)
+      .attr('cy', 20)
+      .attr('r', 30);
+
+	  /*
+ d3.select('svg').append('svg:rect')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('rx', d3.select(this).attr("x"))
+      .attr('ry', d3.select(this).attr("y"))
+	  .style("fill-opacity", .7)
+      .attr("clip-path", function(d,i) { return "url(#clip)"; })
+        .style("fill", "red")
+      .style("stroke", d3.rgb(150, 150, 150))
+   ; */
+    
+				
+			
+    
+				
+				
+				/*
+				var clip = d3.select('svg').append("svg:clipPath")
+      .attr("id", "clip")
+    
+	.append("svg:ellipse")          // shape it as an ellipse
+    .attr("cx", d3.select(this).attr("x"))         // position the x-centre
+    .attr("cy", d3.select(this).attr("y"))         // position the y-centre
+    .attr("rx", 100)         // set the x radius
+    .attr("ry", 50);         // set the y radius
+       var w = 800,
+      h = 600;
+ svg.append('svg:rect')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('rx', d3.select(this).attr("x"))
+      .attr('ry', d3.select(this).attr("y"))
+      .attr("clip-path", function(d,i) { return "url(#clip)"; })
+  //.style("fill-opacity", .05) // set the fill opacity
+    .style("stroke", "red")    // set the line colour
+    .style("fill", "red"); 
+	
+	*/
 				
 				})
 				
