@@ -463,34 +463,39 @@ var histOutputBinding = new Shiny.OutputBinding();
 				})
 				.on("click",function(){
 				
+						 d3.select("rect" ).remove();
+				
 				alert(d3.select(this).attr("x")
 				+"   "+d3.select(this).attr("y"));
 				
 				
 				alert(d3.select(this).attr("hexa")
 				);
+				
+		
+				
 	 var w = 800,
       h = 600,
       margin = 25;
 	  
-	  d3.select("#gcircle" + d3.select(this).attr("hexa")).append("svg:clipPath")
+	var g =d3.select("#gcircle" + d3.select(this).attr("hexa")).append("svg:clipPath")
       .attr("id", "clip")
-    .append("svg:circle")
+    .append("circle")
       .attr('cx', 80)
-      .attr('cy', 20)
+      .attr('cy', 30)
       .attr('r', 30);
 
-	  /*
- d3.select('svg').append('svg:rect')
+	  
+  d3.select("#gcircle" + d3.select(this).attr("hexa")).append('svg:rect')
       .attr('width', w)
       .attr('height', h)
       .attr('rx', d3.select(this).attr("x"))
       .attr('ry', d3.select(this).attr("y"))
-	  .style("fill-opacity", .7)
+	  .style("fill-opacity", 1)
       .attr("clip-path", function(d,i) { return "url(#clip)"; })
         .style("fill", "red")
       .style("stroke", d3.rgb(150, 150, 150))
-   ; */
+   ;
     
 				
 			
