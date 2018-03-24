@@ -481,18 +481,21 @@ var histOutputBinding = new Shiny.OutputBinding();
 	var g =d3.select("#gcircle" + d3.select(this).attr("hexa")).append("svg:clipPath")
       .attr("id", "clip")
     .append("circle")
-      .attr('cx', 80)
-      .attr('cy', 30)
-      .attr('r', 30);
+      .attr('cx',30)
+      .attr('cy',30)
+	      .attr("transform", "translate(" + d3.select(this).attr("x")
++	30  + "," + 
+		  d3.select(this).attr("y)") + 130+")")
+      .attr('r', 20);
 
 	  
   d3.select("#gcircle" + d3.select(this).attr("hexa")).append('svg:rect')
       .attr('width', w)
       .attr('height', h)
-      .attr('rx', d3.select(this).attr("x"))
-      .attr('ry', d3.select(this).attr("y"))
-	  .style("fill-opacity", 1)
-      .attr("clip-path", function(d,i) { return "url(#clip)"; })
+      .attr('rx', d3.select(this).attr("x")-2*d3.select(this).attr("x"))
+      .attr('ry', d3.select(this).attr("y")-2*d3.select(this).attr("y)"))
+	  .style("fill-opacity", .7)   
+	  .attr("clip-path", function(d,i) { return "url(#clip)"; })
         .style("fill", "red")
       .style("stroke", d3.rgb(150, 150, 150))
    ;
@@ -528,6 +531,8 @@ var histOutputBinding = new Shiny.OutputBinding();
 				})
 				
 				.style("fill", "grey");
+				
+				
 			
 /*			
 				
@@ -550,6 +555,9 @@ var histOutputBinding = new Shiny.OutputBinding();
   .style("fill-opacity", .05) // set the fill opacity
     .style("stroke", "red")    // set the line colour
     .style("fill", "red"); 
+	
+	
+	
 	*/
 				
 				/*
