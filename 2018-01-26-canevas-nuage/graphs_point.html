@@ -139,6 +139,9 @@ var histOutputBinding = new Shiny.OutputBinding();
 		});
 		barOrHistoHexagonalGrid();
 	}
+	
+	
+	var margin = {top: 30, right: 40, bottom: 50, left: 60};
 		
 	function barOrHistoSquareSizeGrid(){
 		var svg = d3.select('#grid').append('svg')
@@ -383,10 +386,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 				  
 				  
 		
-				  
-				  
-	
-		
+
 		//Produit les 16 Hexa
 		
 		
@@ -430,8 +430,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 			//var g=d3.select("#gsvg").select("g:nth-child("+nuageData.cell[indice]+")");
 			
 			
-		
-
+	
 	
 
 			var g=d3.select("#gcircle" + nuageData.cell[indice]);
@@ -464,6 +463,9 @@ var histOutputBinding = new Shiny.OutputBinding();
 				.on("click",function(){
 				
 						 d3.select("rect" ).remove();
+						 
+						;
+			
 				
 				alert(d3.select(this).attr("x")
 				+"   "+d3.select(this).attr("y"));
@@ -472,38 +474,74 @@ var histOutputBinding = new Shiny.OutputBinding();
 				alert(d3.select(this).attr("hexa")
 				);
 				
-		
-				
-	 var w = 800,
-      h = 600,
-      margin = 25;
-	  
-	var g =d3.select("#gcircle" + d3.select(this).attr("hexa")).append("svg:clipPath")
-      .attr("id", "clip")
-    .append("circle")
-      .attr('cx',30)
-      .attr('cy',30)
-	      .attr("transform", "translate(" + d3.select(this).attr("x")
-+	30  + "," + 
-		  d3.select(this).attr("y)") + 130+")")
-      .attr('r', 20);
-
-	  
-  d3.select("#gcircle" + d3.select(this).attr("hexa")).append('svg:rect')
-      .attr('width', w)
-      .attr('height', h)
-      .attr('rx', d3.select(this).attr("x")-2*d3.select(this).attr("x"))
-      .attr('ry', d3.select(this).attr("y")-2*d3.select(this).attr("y)"))
-	  .style("fill-opacity", .7)   
-	  .attr("clip-path", function(d,i) { return "url(#clip)"; })
-        .style("fill", "red")
-      .style("stroke", d3.rgb(150, 150, 150))
-   ;
-    
 				
 			
-    
+			
+			
+			
+			
+			
+			var g=d3.select("#gcircle" +d3.select(this).attr("hexa"));
+			
+
+						g.select(".x.axis").remove();
+		
+			var echelleX = d3.scale.linear()
+				.domain([d3.select(this).attr("x")-1,d3.max(nuageData.x)])
+				.range([0,width/2 +10])
 				
+				
+		
+		
+		
+		var xAxe = d3.svg.axis()
+                  .scale(echelleX)
+				  .tickSize(1)
+				  .ticks(4)
+                  .orient("bottom")
+				
+				 
+        .innerTickSize(-height); // preparation  de gridlines
+				  
+				  
+		
+				  
+		var yAxe = d3.svg.axis()
+                 .scale(echelleY)
+				  .tickSize(1)
+				  .ticks(4)
+                  .orient("left")
+	
+				 
+        .innerTickSize(-width+28);
+		
+		
+		
+		
+				g.append("g")
+			.attr("class", "x axis") // permet de tracer
+				.call(xAxe.scale(echelleX))
+				.attr("transform", "translate("+ 0 +","+ (width/2 +10) +")" );
+	
+	
+	//alert(g.selectAll("circle").attr("x"));
+	
+	//g.selectAll("circle").remove();
+	
+	
+	
+		for (var indice=1; indice<nuageData.cell.length; indice++){
+				  
+	
+	
+	if(indice==d3.select(this).attr("hexa"))
+	
+	
+	      alert(indice);
+		
+				
+
+				}
 				
 				/*
 				var clip = d3.select('svg').append("svg:clipPath")
@@ -527,6 +565,9 @@ var histOutputBinding = new Shiny.OutputBinding();
     .style("fill", "red"); 
 	
 	*/
+	
+	
+	  
 				
 				})
 				
@@ -587,21 +628,31 @@ var randomX = d3.random.normal(width / 2, 80),
 	
 			
 			
-             var zoom = d3.behavior.zoom() .scaleExtent([1, 3])
-  
-             .on("zoom", function() {    
-             var graph = d3.select('svg');
-            graph.select("#gcircle" + nuageData.cell[indice])
-			
-            .attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-            });  
-			
-			
-           var svg = d3.select("#gcircle" + nuageData.cell[indice]).call(zoom);
+          
 				
 		}
 		
+
+	
+	
+	
+	
+
+
+var zoomListener = d3.behavior.zoom()
+  .scaleExtent([0.1, 3])
+  .on("zoom", zoomHandler);
+
+function zoomHandler() {
+  vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+
+
+
+
 		
+	
+	
 	
 		
 		
