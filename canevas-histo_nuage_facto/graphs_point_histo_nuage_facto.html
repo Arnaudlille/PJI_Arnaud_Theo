@@ -1,0 +1,398 @@
+<head>
+<style type="text/css">
+	.font-styles {
+		font-family: "Source Code Pro", Consolas, monaco, monospace;
+		font-size: 18px; 
+		line-height: 1.5; 
+		font-weight: 400; 
+	}
+
+	body{
+		position: relative;
+		font-family: "Source Code Pro", Consolas, monaco, monospace;
+		font-size: 18px; 
+		line-height: 1.5; 
+		font-weight: 400; 
+		color: #7AC143;
+		background-color:  #eee;
+		padding: 20px;
+	}
+
+	h4 {
+		font-size: 18px;
+	}
+	
+	.axis {
+		font-size:10px;
+	}
+	
+</style>
+<script type="text/javascript">
+function affichelabelnuage(label,x,y){
+		var ch=label + ' :' + x + ' '+y;
+		d3.select('#grid-ref').text(ch);
+}
+
+function affichelabelhisto(x){
+		var ch='Valeur :' + x;
+		d3.select('#grid-ref').text(ch);
+}
+</script>
+</head>
+
+<header>
+ <h4 id="grid-ref"></h4>
+</header>
+
+<section id='grid'></section>
+
+<script>
+
+
+/* COMPRENDRE LES METHODES DE CHAQUE  CLASSE
+
+SI ELLLES SONT EXPLICITES SINON AFFRONDIR */
+
+var histOutputBinding = new Shiny.OutputBinding();
+
+  $.extend(histOutputBinding, {
+    find: function(scope) {
+      return $(scope).find('.shiny-hist'); // on selectionne la classe
+	  
+	  //shiny-hist ui.R  destinée à afficher l'histogramme
+    },
+    renderValue: function(el, data) {
+    //remove the old graph
+	document.getElementById("grid").innerHTML = ""; 
+	if(data == null ) {return;}
+	
+	
+	 // on recupere les attributs de la donnée data du fichier server.R	
+	
+	var nbRows=data.gridInfo.nbLines;
+	var nbColumns=data.gridInfo.nbColumns;
+	var topology = data.gridInfo.topology;
+	var superclass = data.superclass;
+	var superclassColor = data.superclassColor;
+	var nbBatons = data.nbBatons;
+	var isHist = data.isHist;
+	var label = data.label;
+	var labelColor = data.labelColor;
+	var nuageData = data.nuageData;
+	var nuageRange = data.nuageRange;
+	var plotType = data.plotType;
+	
+	// création attributs pour NuageDrawer
+
+	var coordinatesArrayX = [];
+	var coordinatesArrayY = [];
+	var hexbin;
+	var points = [];
+	
+	// on va  créer l'objet nuageData dans  server.R et l'appeler
+	
+	// comme suit data.nuageData
+	
+	var batonNormalizedValues = data.batonNormalizedValues;
+	var batonRealValues = data.batonRealValues;
+	var cellSize=data.sizeInfo;
+	
+	// combre de lignes et colonnes de l'hexagone  de data
+	
+	var w = cellSize*nbColumns;   
+	var h = cellSize*nbRows;
+
+	document.getElementById("grid-ref").style.textAlign = "";
+
+	 if(topology.localeCompare('rectangular')==0){
+		d3.select('#grid-ref').text(function () {
+			if(isHist){
+				return 'Square Grid : Histogramme';
+			}else{
+				return 'Square Grid : Baton';
+			}
+		});
+		
+		SquareSizeGrid();
+		
+		if(plotType.localeCompare('nuage')==0){
+		
+		for (var i = 0; i < nbRows; i++) {
+			for (var j = 0; j < nbColumns; j++) {
+				coordinatesArrayX.push(j*cellSize + 12);
+				coordinatesArrayY.push(i*cellSize - 15);
+			}
+		}
+		
+		NuageDrawer(cellSize,cellSize,cellSize-20,coordinatesArrayX,coordinatesArrayY,20,20,cellSize);
+		
+		}else if(plotType.localeCompare('batons')==0){
+		for (var i = 0; i < nbRows; i++) {
+			for (var j = 0; j < nbColumns; j++) {
+				coordinatesArrayX.push(j*cellSize + 10);
+				coordinatesArrayY.push(i*cellSize + 50);
+			}
+		}
+		
+		HistoDrawer(cellSize,cellSize,coordinatesArrayX,coordinatesArrayY);
+		}
+			
+	}else if(topology.localeCompare('hexagonal')==0){
+		d3.select('#grid-ref').text(function () {
+			if(isHist){
+				return 'Hexagonal Grid : Histogramme';
+			}else{
+				return 'Hexagonal Grid : Baton';
+			}
+		});
+		//
+		HexagonalGrid();
+		
+		//
+		var width = cellSize;
+		var height = cellSize-(cellSize*40/100) ;			
+		var coordinatesArray = hexbin(points);
+		var coordinatesArrayX = [];
+		var coordinatesArrayY = [];
+		
+		if(plotType.localeCompare('nuage')==0){
+		
+		for (var indice = 0; indice < coordinatesArray.length; indice++) {
+				coordinatesArrayX.push(coordinatesArray[indice].x + 22);
+				coordinatesArrayY.push(coordinatesArray[indice].y + 17);
+		} 
+		
+		NuageDrawer(width,height,(width/2+5),coordinatesArrayX,coordinatesArrayY,7,0,height-5);
+		
+		}else if(plotType.localeCompare('batons')==0){
+			for (var indice = 0; indice < coordinatesArray.length; indice++) {
+					coordinatesArrayX.push(coordinatesArray[indice].x + 10);
+					coordinatesArrayY.push(coordinatesArray[indice].y + 50);
+			} 
+			
+			HistoDrawer(width,height,coordinatesArrayX,coordinatesArrayY);
+		}
+	}
+		
+	function SquareSizeGrid(){
+	
+		var svg = d3.select('#grid').append('svg')
+			.attr("style"," display:block; margin:auto; margin-top:70px; background-color:#eee")
+			.attr({
+				width: 600,
+				height: 600
+		}); 
+		
+		document.getElementById("grid-ref").style.textAlign = "center";
+		
+		_.times(nbRows, function(n) {
+			var k=0;
+			var rows = svg.selectAll('rect' + ' .row-' + (n + 1))
+				.data(d3.range(nbColumns))
+				.enter().append('rect')
+				.attr({
+					class: function(d, i) {
+						return 'square row-' + (n + 1) + ' ' + 'col-' + (i + 1);
+					},
+					id: function(d, i) {
+						return 's-' + ((4* (n + 1)) - (4- (i + 1)));
+					},
+					width: cellSize,
+					height: cellSize,
+				x: function(d, i) {
+					return i * cellSize;
+				},
+				y: n * cellSize,
+				fill: function(d, i) {
+					var indice = superclass[(n*nbColumns)+i];
+					return superclassColor[indice-1];
+				},
+				stroke: '#FDBB30'
+				});
+			});	
+		}
+		
+	
+	function HistoDrawer(width,height,coordinatesArrayX,coordinatesArrayY){
+	
+		var svg = d3.select('svg');
+		
+		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
+			svg.append("g")
+				.attr("id", "ghisto" + (indice + 1) )
+				.attr("width", (width) + "px")
+				.attr("height",(height) + "px")
+				.attr("transform", "translate(" + (coordinatesArrayX[indice]) + ',' + (coordinatesArrayY[indice]) + ')' );
+		}
+		
+		
+		
+		//rempli les nuages avec les points
+		for (var indice=0; indice<nbRows*nbColumns; indice++){
+		
+			var innerArrayNormalizedValues= batonNormalizedValues[indice];
+			var innerArrayRealValues= batonRealValues[indice];
+
+			var arrayValues = [];
+			for(var j=0; j<nbBatons; j++){
+
+				var g=d3.select("#ghisto" + (indice+1))
+				
+				g.append("rect")
+					.attr("onmouseover","affichelabelhisto("+ innerArrayRealValues[j] +")")
+					.attr("class", function() {
+						return "r"+j;
+					})
+					.attr("x",function(){
+						return j*((width-(cellSize*40/100))/nbBatons)+(cellSize*20/100);
+					})
+					.attr("y",function(){
+						return -innerArrayNormalizedValues[j]*(cellSize*55/100)+cellSize*25/100;
+					})
+					.attr("width",function(){
+						return ((width-(cellSize*40/100))/nbBatons)-(cellSize*2/100);
+					})
+					.attr("height",function(){
+						return innerArrayNormalizedValues[j]*cellSize*55/100;
+					})
+					.attr("fill", function() {
+						return labelColor[j];
+					});
+			}	
+		}	
+	}
+	
+	function NuageDrawer(width,height,axe,coordinatesArrayX,coordinatesArrayY,miny,transpoX,maxy){
+	
+		var svg = d3.select('svg');
+
+		var echelleY = d3.scale.linear()
+				.domain([nuageRange[1][0],nuageRange[1][1]])
+				.range([maxy,miny]);
+						
+		var echelleX = d3.scale.linear()
+				.domain([nuageRange[0][0],nuageRange[0][1]])
+				.range([0,axe]);
+				
+		var xAxe = d3.svg.axis()
+                  .scale(echelleX)
+				  .tickSize(0.5)
+				  .ticks(4)
+                  .orient("bottom");
+				  
+		var yAxe = d3.svg.axis()
+                  .scale(echelleY)
+				  .tickSize(0.5)
+				  .ticks(4)
+                  .orient("left");
+		
+		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
+			svg.append("g")
+				.attr("id", "gcircle" + (indice + 1) )
+				.attr("width", (width) + "px")
+				.attr("height",(height) + "px")
+				.attr("transform", "translate(" + (coordinatesArrayX[indice]) + ',' + (coordinatesArrayY[indice]) + ')' );
+		}
+		
+		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
+			var g=d3.select("#gcircle" +(indice+1));
+			
+			g.append("g")
+				.attr("class","axis")
+				.attr("transform", "translate("+ 0 +","+ (axe + transpoX) +")" )
+				.call(xAxe);
+	
+	
+			g.append("g")
+				.attr("class","axis")
+				.call(yAxe);
+
+	
+		}
+		
+		
+		//rempli les nuages avec les points
+		for (var indice=0; indice<nbRows*nbColumns; indice++){
+			var dataCell=nuageData[indice+1];
+			
+			for(var j=0; j<dataCell.x.length; j++){
+				var g=d3.select("#gcircle" + (indice+1));
+				g.append("circle")
+					.attr("onmouseover","affichelabelnuage(" + dataCell.label[j] + ',' + dataCell.x[j] + ',' + dataCell.y[j] + ");")
+					.attr("cx",function(){
+					return (echelleX(dataCell.x[j]));
+					})
+					.attr("cy",function(){
+						return (echelleY(dataCell.y[j]));
+					})
+					.attr("r",function(){
+						return 3;
+					})
+					.style("stroke", "black")
+					.style("fill","none");
+			}
+				
+		}	
+	}
+		
+	
+	function HexagonalGrid(){
+		var margin = {
+			top: 30,
+			right: 20,
+			bottom: 20,
+			left: 50
+		};
+
+		var width = 850;
+		var height = 350;
+		var widtht = 850;
+		var heightt = 350;
+
+		var hexRadius=cellSize/2;	
+		var hexInRadius;	
+			
+
+		//Set the new height and width of the SVG based on the max possible
+		width = nbColumns*hexRadius*Math.sqrt(3);
+		height = nbRows*1.5*hexRadius+0.5*hexRadius;
+
+		//Set the hexagon radius
+		hexbin = d3.hexbin().radius(hexRadius);
+			   
+		//Calculate the center positions of each hexagon	
+		for (var i = 0; i < nbRows; i++) {
+			for (var j = 0; j < nbColumns; j++) {
+				points.push([(hexRadius * j * 1.75), (hexRadius * i * 1.5)]);
+			}
+		}
+
+		var svg = d3.select("#grid").append("svg")
+			.attr("width", width+hexRadius+5)
+			.attr("height", height)
+			.attr("style"," display:block; margin:auto; margin-top:30px;")
+			.append("g")
+			.attr("transform", "translate(" + hexRadius + "," + hexRadius+ ")")
+			.attr("id", "gsvg");
+
+		var hexa = svg.selectAll(".hexagon")
+			.data(hexbin(points))
+			.enter().append("path")
+			.attr("class", "hexagon")
+			.attr("d", function (d) {
+				return "M" + d.x + "," + d.y + hexbin.hexagon();
+			})
+			.attr("stroke", function (d,i) {
+				return "#fff";
+			})
+			.attr("stroke-width", "1px")
+			.style("fill", function (d,i) {
+				var indice = superclass[i];
+				return superclassColor[indice-1];
+			});
+	
+	}
+	}
+});
+Shiny.outputBindings.register(histOutputBinding, 'just.testing');			
+</script>	
