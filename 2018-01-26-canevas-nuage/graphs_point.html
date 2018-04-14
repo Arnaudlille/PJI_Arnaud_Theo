@@ -296,6 +296,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 	}
 	
 	
+		
 	
 	
 	function barOrHistoHexagonalGrid(){
@@ -390,6 +391,8 @@ var histOutputBinding = new Shiny.OutputBinding();
 		//Produit les 16 Hexa
 		
 		
+	
+		
 	for (var indice = 0; indice < nbRows*nbColumns; indice++) {
 			svg.append("g")
 				.attr("id", "gcircle" + (indice + 1) )
@@ -422,13 +425,38 @@ var histOutputBinding = new Shiny.OutputBinding();
 		
 	
 	
+	var dept = [];
 	
+	
+	for(var i=0;i<16;i++){
+	
+	
+	
+	
+	dept[i]=new Array();
+	
+	
+	}
+	
+	
+	
+	
+	 var cpt=new Array();
+	 
+	 
+	 var c=0;
 		
 		//rempli les Hexa avec les points
 		for (var indice=0; indice<nuageData.cell.length; indice++){
 			
 			//var g=d3.select("#gsvg").select("g:nth-child("+nuageData.cell[indice]+")");
 			
+			
+		cpt.push(indice);
+		
+		c+=1;
+			
+	
 			
 	
 	
@@ -454,9 +482,17 @@ var histOutputBinding = new Shiny.OutputBinding();
 				.attr("y",function(){
 					return nuageData.y[indice]  ;
 				})
-	
-	
+				
+				.attr("i",function(){
+					return cpt[c] ;
+				})
+				
+				
+				
+				
 
+				
+			
 				.attr("r",function(){
 					return 5;
 				})
@@ -464,7 +500,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 				
 						 d3.select("rect" ).remove();
 						 
-						;
+						
 			
 				
 				alert(d3.select(this).attr("x")
@@ -524,7 +560,40 @@ var histOutputBinding = new Shiny.OutputBinding();
 				.attr("transform", "translate("+ 0 +","+ (width/2 +10) +")" );
 	
 	
-	//alert(g.selectAll("circle").attr("x"));
+	
+alert(g.selectAll("circle").size ());
+
+
+var x=d3.select(this).attr("x");
+
+
+
+	
+   g.selectAll("circle").each(
+   
+   function(){
+   
+   
+   
+
+	
+	if(d3.select(this).attr("x")<x)
+	
+	
+		d3.select(this).remove();
+   
+   alert(x+"eeeeeehfh");
+   
+   }
+   
+   
+   
+   );
+	
+	
+	
+	
+	
 	
 	//g.selectAll("circle").remove();
 	
@@ -573,6 +642,8 @@ var histOutputBinding = new Shiny.OutputBinding();
 				
 				.style("fill", "grey");
 				
+				
+			
 				
 			
 /*			
