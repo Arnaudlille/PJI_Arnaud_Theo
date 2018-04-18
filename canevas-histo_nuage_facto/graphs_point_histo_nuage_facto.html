@@ -1,5 +1,5 @@
 <head>
-<style type="text/css">
+<style id="css" type="text/css">
 	.font-styles {
 		font-family: "Source Code Pro", Consolas, monaco, monospace;
 		font-size: 18px; 
@@ -27,18 +27,22 @@
 	}
 	
 </style>
-<script type="text/javascript">
+<script id="funct" type="text/javascript">
 function affichelabelnuage(label,x,y){
 		var ch=label + ' :' + x + ' '+y;
-		d3.select('#grid-ref').text(ch);
+		document.getElementById("grid-ref").innerHTML=ch;
+		//d3.select('#grid-ref').text(ch);
 }
 
 function affichelabelhisto(x){
 		var ch='Valeur :' + x;
-		d3.select('#grid-ref').text(ch);
+		document.getElementById("grid-ref").innerHTML=ch;
+		//d3.select('#grid-ref').text(ch);
 }
 </script>
 </head>
+
+<button id="export">Export</button>
 
 <header>
  <h4 id="grid-ref"></h4>
@@ -119,18 +123,18 @@ var histOutputBinding = new Shiny.OutputBinding();
 		
 		for (var i = 0; i < nbRows; i++) {
 			for (var j = 0; j < nbColumns; j++) {
-				coordinatesArrayX.push(j*cellSize + 12);
-				coordinatesArrayY.push(i*cellSize - 15);
+				coordinatesArrayX.push(j*cellSize + (12*(cellSize/100)));
+				coordinatesArrayY.push(i*cellSize - (15*(cellSize/100)));
 			}
 		}
 		
-		NuageDrawer(cellSize,cellSize,cellSize-20,coordinatesArrayX,coordinatesArrayY,20,20,cellSize);
+		NuageDrawer(cellSize,cellSize,cellSize-(20*(cellSize/100)),coordinatesArrayX,coordinatesArrayY,20*(cellSize/100),20*(cellSize/100),cellSize);
 		
 		}else if(plotType.localeCompare('batons')==0){
 		for (var i = 0; i < nbRows; i++) {
 			for (var j = 0; j < nbColumns; j++) {
-				coordinatesArrayX.push(j*cellSize + 10);
-				coordinatesArrayY.push(i*cellSize + 50);
+				coordinatesArrayX.push(j*cellSize + (10*(cellSize/100)));
+				coordinatesArrayY.push(i*cellSize + (50*(cellSize/100)));
 			}
 		}
 		
@@ -158,29 +162,35 @@ var histOutputBinding = new Shiny.OutputBinding();
 		if(plotType.localeCompare('nuage')==0){
 		
 		for (var indice = 0; indice < coordinatesArray.length; indice++) {
-				coordinatesArrayX.push(coordinatesArray[indice].x + 22);
-				coordinatesArrayY.push(coordinatesArray[indice].y + 17);
+				coordinatesArrayX.push(coordinatesArray[indice].x + (22*(cellSize/100)));
+				coordinatesArrayY.push(coordinatesArray[indice].y + (17*(cellSize/100)));
 		} 
 		
-		NuageDrawer(width,height,(width/2+5),coordinatesArrayX,coordinatesArrayY,7,0,height-5);
+		NuageDrawer(width,height,(width/2+(5*(cellSize/100))),coordinatesArrayX,coordinatesArrayY,7*(cellSize/100),0,height-(5*(cellSize/100)));
 		
 		}else if(plotType.localeCompare('batons')==0){
 			for (var indice = 0; indice < coordinatesArray.length; indice++) {
-					coordinatesArrayX.push(coordinatesArray[indice].x + 10);
-					coordinatesArrayY.push(coordinatesArray[indice].y + 50);
+					coordinatesArrayX.push(coordinatesArray[indice].x + (10*(cellSize/100)));
+					coordinatesArrayY.push(coordinatesArray[indice].y + (50*(cellSize/100)));
 			} 
 			
 			HistoDrawer(width,height,coordinatesArrayX,coordinatesArrayY);
 		}
-	}
 		
+		
+	}
+
+	
 	function SquareSizeGrid(){
+	
+		widthsvg = nbColumns*cellSize;
+		heightsvg = nbRows*cellSize;
 	
 		var svg = d3.select('#grid').append('svg')
 			.attr("style"," display:block; margin:auto; margin-top:70px; background-color:#eee")
 			.attr({
-				width: 600,
-				height: 600
+				width: widthsvg,
+				height: heightsvg
 		}); 
 		
 		document.getElementById("grid-ref").style.textAlign = "center";
@@ -195,7 +205,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 						return 'square row-' + (n + 1) + ' ' + 'col-' + (i + 1);
 					},
 					id: function(d, i) {
-						return 's-' + ((4* (n + 1)) - (4- (i + 1)));
+						return 'back ' + ((4* (n + 1)) - (4- (i + 1)));
 					},
 					width: cellSize,
 					height: cellSize,
@@ -212,6 +222,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 			});	
 		}
 		
+	document.getElementById("export").onclick = function(){download(2);};
 	
 	function HistoDrawer(width,height,coordinatesArrayX,coordinatesArrayY){
 	
@@ -219,7 +230,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 		
 		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
 			svg.append("g")
-				.attr("id", "ghisto" + (indice + 1) )
+				.attr("id", "ggraph" + (indice + 1) )
 				.attr("width", (width) + "px")
 				.attr("height",(height) + "px")
 				.attr("transform", "translate(" + (coordinatesArrayX[indice]) + ',' + (coordinatesArrayY[indice]) + ')' );
@@ -236,7 +247,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 			var arrayValues = [];
 			for(var j=0; j<nbBatons; j++){
 
-				var g=d3.select("#ghisto" + (indice+1))
+				var g=d3.select("#ggraph" + (indice+1))
 				
 				g.append("rect")
 					.attr("onmouseover","affichelabelhisto("+ innerArrayRealValues[j] +")")
@@ -288,14 +299,14 @@ var histOutputBinding = new Shiny.OutputBinding();
 		
 		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
 			svg.append("g")
-				.attr("id", "gcircle" + (indice + 1) )
+				.attr("id", "ggraph" + (indice + 1) )
 				.attr("width", (width) + "px")
 				.attr("height",(height) + "px")
 				.attr("transform", "translate(" + (coordinatesArrayX[indice]) + ',' + (coordinatesArrayY[indice]) + ')' );
 		}
 		
 		for (var indice = 0; indice < nbRows*nbColumns; indice++) {
-			var g=d3.select("#gcircle" +(indice+1));
+			var g=d3.select("#ggraph" +(indice+1));
 			
 			g.append("g")
 				.attr("class","axis")
@@ -316,7 +327,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 			var dataCell=nuageData[indice+1];
 			
 			for(var j=0; j<dataCell.x.length; j++){
-				var g=d3.select("#gcircle" + (indice+1));
+				var g=d3.select("#ggraph" + (indice+1));
 				g.append("circle")
 					.attr("onmouseover","affichelabelnuage(" + dataCell.label[j] + ',' + dataCell.x[j] + ',' + dataCell.y[j] + ");")
 					.attr("cx",function(){
@@ -379,6 +390,9 @@ var histOutputBinding = new Shiny.OutputBinding();
 			.data(hexbin(points))
 			.enter().append("path")
 			.attr("class", "hexagon")
+			.attr("id",function (d,i){
+				return "back " + i;
+			})
 			.attr("d", function (d) {
 				return "M" + d.x + "," + d.y + hexbin.hexagon();
 			})
@@ -391,6 +405,30 @@ var histOutputBinding = new Shiny.OutputBinding();
 				return superclassColor[indice-1];
 			});
 	
+	}
+	
+	function download(indice){
+		var a = document.body.appendChild(
+			document.createElement("a")
+		);
+		
+		a.setAttribute("display","none");
+		var css ="<style type=\"text\/css\"> " + document.getElementById("css").innerHTML + "</style>";
+		var header="<header><h4 id=\"grid-ref\"></h4></header>";
+		var fonct= "<script>" + document.getElementById("funct").innerHTML + "<\/script>";
+		var back=document.getElementById("back " + (indice));
+		if(topology.localeCompare('hexagonal')==0){
+			var topologie="<path d=" + back.dataset.d + " stroke=" + back.dataset.stroke + " stroke-width=" + back.dataset.stroke-width + " style=" + back.dataset.style + "></path>" ;
+		}else{
+			var topologie="<rect width=" + cellSize + " height=" + cellSize + " x=" + 15 + " y=" + 45 + " fill=#FF4444 stroke=#FDBB30></rect>";
+		}
+		var graph=document.getElementById("ggraph" + (indice));
+		
+		var svg="<svg width="+2*cellSize+ " height=" +2*cellSize+">" + topologie +"<g transform=translate(30,30)>" + document.getElementById("ggraph" + (indice)).innerHTML + "</g></svg>"
+		a.download = "export.html";
+		a.href = "data:text/html," + css + header + fonct + svg ;
+		a.click();
+		a.parentNode.removeChild(a);
 	}
 	}
 });
