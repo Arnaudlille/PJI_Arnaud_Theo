@@ -22,9 +22,6 @@
 		font-size: 18px;
 	}
 	
-	.axis {
-		font-size:10px;
-	}
 	
 </style>
 <script id="funct" type="text/javascript">
@@ -188,6 +185,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 	
 		var svg = d3.select('#grid').append('svg')
 			.attr("style"," display:block; margin:auto; margin-top:70px; background-color:#eee")
+			.attr("id","svggraph")
 			.attr({
 				width: widthsvg,
 				height: heightsvg
@@ -222,7 +220,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 			});	
 		}
 		
-	document.getElementById("export").onclick = function(){download(2);};
+	document.getElementById("export").onclick = function(){download();};
 	
 	function HistoDrawer(width,height,coordinatesArrayX,coordinatesArrayY){
 	
@@ -310,12 +308,14 @@ var histOutputBinding = new Shiny.OutputBinding();
 			
 			g.append("g")
 				.attr("class","axis")
+				.attr("font-size", cellSize/10 + "px")
 				.attr("transform", "translate("+ 0 +","+ (axe + transpoX) +")" )
 				.call(xAxe);
 	
 	
 			g.append("g")
 				.attr("class","axis")
+				.attr("font-size",cellSize/10 + "px")
 				.call(yAxe);
 
 	
@@ -337,7 +337,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 						return (echelleY(dataCell.y[j]));
 					})
 					.attr("r",function(){
-						return 3;
+						return 3*(cellSize/100);
 					})
 					.style("stroke", "black")
 					.style("fill","none");
@@ -381,6 +381,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 		var svg = d3.select("#grid").append("svg")
 			.attr("width", width+hexRadius+5)
 			.attr("height", height)
+			.attr("id","svggraph")
 			.attr("style"," display:block; margin:auto; margin-top:30px;")
 			.append("g")
 			.attr("transform", "translate(" + hexRadius + "," + hexRadius+ ")")
@@ -407,7 +408,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 	
 	}
 	
-	function download(indice){
+	function download(){
 		var a = document.body.appendChild(
 			document.createElement("a")
 		);
@@ -416,17 +417,11 @@ var histOutputBinding = new Shiny.OutputBinding();
 		var css ="<style type=\"text\/css\"> " + document.getElementById("css").innerHTML + "</style>";
 		var header="<header><h4 id=\"grid-ref\"></h4></header>";
 		var fonct= "<script>" + document.getElementById("funct").innerHTML + "<\/script>";
-		var back=document.getElementById("back " + (indice));
-		if(topology.localeCompare('hexagonal')==0){
-			var topologie="<path d=" + back.dataset.d + " stroke=" + back.dataset.stroke + " stroke-width=" + back.dataset.stroke-width + " style=" + back.dataset.style + "></path>" ;
-		}else{
-			var topologie="<rect width=" + cellSize + " height=" + cellSize + " x=" + 15 + " y=" + 45 + " fill=#FF4444 stroke=#FDBB30></rect>";
-		}
-		var graph=document.getElementById("ggraph" + (indice));
+		var svg=document.getElementById("svggraph").outerHTML;
 		
-		var svg="<svg width="+2*cellSize+ " height=" +2*cellSize+">" + topologie +"<g transform=translate(30,30)>" + document.getElementById("ggraph" + (indice)).innerHTML + "</g></svg>"
+		var fichier=encodeURIComponent(css+header+fonct+svg);
 		a.download = "export.html";
-		a.href = "data:text/html," + css + header + fonct + svg ;
+		a.href = "data:text/html," + fichier ;
 		a.click();
 		a.parentNode.removeChild(a);
 	}
