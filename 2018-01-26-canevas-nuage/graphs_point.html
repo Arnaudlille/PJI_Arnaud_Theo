@@ -467,6 +467,8 @@ var histOutputBinding = new Shiny.OutputBinding();
 				.attr("cx",function(){
 				return (echelleX(nuageData.x[indice]));
 				})
+				
+				
 				.attr("cy",function(){
 					return (echelleY(nuageData.y[indice]));
 				})
@@ -503,12 +505,6 @@ var histOutputBinding = new Shiny.OutputBinding();
 						
 			
 				
-				alert(d3.select(this).attr("x")
-				+"   "+d3.select(this).attr("y"));
-				
-				
-				alert(d3.select(this).attr("hexa")
-				);
 				
 				
 			
@@ -521,6 +517,8 @@ var histOutputBinding = new Shiny.OutputBinding();
 			
 
 						g.select(".x.axis").remove();
+						
+						g.select(".y.axis").remove();
 		
 			var echelleX = d3.scale.linear()
 				.domain([d3.select(this).attr("x")-1,d3.max(nuageData.x)])
@@ -551,6 +549,11 @@ var histOutputBinding = new Shiny.OutputBinding();
 				 
         .innerTickSize(-width+28);
 		
+			
+		var echelleY = d3.scale.linear()
+				.domain([d3.min(nuageData.y),d3.max(nuageData.y)])
+				.range([height,0])
+		
 		
 		
 		
@@ -558,15 +561,70 @@ var histOutputBinding = new Shiny.OutputBinding();
 			.attr("class", "x axis") // permet de tracer
 				.call(xAxe.scale(echelleX))
 				.attr("transform", "translate("+ 0 +","+ (width/2 +10) +")" );
+				
+				
+				
+				g.append("g")
+			.attr("class", "y axis") // permet de tracer
+				.call(yAxe.scale(echelleY))
 	
 	
-	
-alert(g.selectAll("circle").size ());
+
 
 
 var x=d3.select(this).attr("x");
 
 
+
+/*
+var zoom = d3.behavior.zoom()
+  .scaleExtent([1, 3])
+  .on("zoom", function() {    
+   
+      g.selectAll('circle')
+	  .attr('r',8);
+ 
+ 
+ alert( g.selectAll('g'));
+
+
+ });
+var svg = d3.select('svg').call(zoom);
+
+
+*/
+
+
+ g.selectAll('circle').on("wheel", function(d){
+ 
+ 
+            var direction = d3.event.wheelDelta < 0 ? 'down' : 'up';
+            
+			
+			
+			
+			
+			if(direction=='up'){
+			
+			
+			  g.selectAll('circle')
+	  .attr('r',8);
+ 
+			
+			 }else{
+			 
+			   g.selectAll('circle')
+	  .attr('r',5);
+ 
+			 
+			 }
+			
+			
+			
+        });
+
+
+/*
 
 	
    g.selectAll("circle").each(
@@ -575,20 +633,40 @@ var x=d3.select(this).attr("x");
    
    
    
+   
+
 
 	
-	if(d3.select(this).attr("x")<x)
+	if(d3.select(this).attr("x")<x){
 	
 	
 		d3.select(this).remove();
    
-   alert(x+"eeeeeehfh");
+ 
+ 
+ }else {
+ 
+
+ 
+
+				
+
+ 
+
+ 	
+
+
    
+   
+
    }
    
+
+ }
    
    
-   );
+   
+   ); */
 	
 	
 	
@@ -599,19 +677,7 @@ var x=d3.select(this).attr("x");
 	
 	
 	
-		for (var indice=1; indice<nuageData.cell.length; indice++){
-				  
-	
-	
-	if(indice==d3.select(this).attr("hexa"))
-	
-	
-	      alert(indice);
 		
-				
-
-				}
-				
 				/*
 				var clip = d3.select('svg').append("svg:clipPath")
       .attr("id", "clip")
