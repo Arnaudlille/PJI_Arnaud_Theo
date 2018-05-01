@@ -572,9 +572,27 @@ var histOutputBinding = new Shiny.OutputBinding();
 
 
 
+var x=g.selectAll('circle').attr("x");
+
+
+
 var x=d3.select(this).attr("x");
 
 
+ g.selectAll("circle").each(
+   
+   function(){
+   
+
+ if(d3.select(this).attr("x")<x)
+
+
+ 
+            d3.select(this).attr("visibility", "hidden");
+         
+
+		 
+		 });
 
 /*
 var zoom = d3.behavior.zoom()
@@ -615,6 +633,85 @@ var svg = d3.select('svg').call(zoom);
 			 
 			   g.selectAll('circle')
 	  .attr('r',5);
+	 
+	var a=d3.select("#gcircle" +d3.select(this).attr("hexa"));
+
+
+	  
+	  
+		g.select(".x.axis").remove();
+						
+						g.select(".y.axis").remove();
+		
+			var echelleX = d3.scale.linear()
+				.domain([d3.min(nuageData.x),d3.max(nuageData.x)])
+				.range([0,width/2 +10])
+				
+				
+		
+		
+		
+		var xAxe = d3.svg.axis()
+                  .scale(echelleX)
+				  .tickSize(1)
+				  .ticks(4)
+                  .orient("bottom")
+				
+				 
+        .innerTickSize(-height); // preparation  de gridlines
+				  
+				  
+		
+				  
+		var yAxe = d3.svg.axis()
+                 .scale(echelleY)
+				  .tickSize(1)
+				  .ticks(4)
+                  .orient("left")
+	
+				 
+        .innerTickSize(-width+28);
+		
+			
+		var echelleY = d3.scale.linear()
+				.domain([d3.min(nuageData.y),d3.max(nuageData.y)])
+				.range([height,0])
+		
+		
+		
+		
+				g.append("g")
+			.attr("class", "x axis") // permet de tracer
+				.call(xAxe.scale(echelleX))
+				.attr("transform", "translate("+ 0 +","+ (width/2 +10) +")" );
+				
+				
+				
+				g.append("g")
+			.attr("class", "y axis") // permet de tracer
+				.call(yAxe.scale(echelleY))
+				
+				
+				var mix=d3.min(nuageData.x);
+				
+			 g.selectAll("circle").each(
+   
+   function(){
+   
+
+ if(d3.select(this).attr("x")>=mix)
+
+
+  
+ 
+            d3.select(this).attr("visibility", "visible");
+         
+
+		 
+		 });
+
+			
+			
  
 			 
 			 }
