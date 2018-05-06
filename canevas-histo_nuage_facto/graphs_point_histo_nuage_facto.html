@@ -285,13 +285,13 @@ var histOutputBinding = new Shiny.OutputBinding();
 				
 		var xAxe = d3.svg.axis()
                   .scale(echelleX)
-				  .tickSize(0.5)
+				  .tickSize(0.5*(cellSize/100))
 				  .ticks(4)
                   .orient("bottom");
 				  
 		var yAxe = d3.svg.axis()
                   .scale(echelleY)
-				  .tickSize(0.5)
+				  .tickSize(0.5*(cellSize/100))
 				  .ticks(4)
                   .orient("left");
 		
