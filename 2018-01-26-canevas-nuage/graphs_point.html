@@ -498,7 +498,7 @@ var histOutputBinding = new Shiny.OutputBinding();
 				.attr("r",function(){
 					return 5;
 				})
-				.on("click",function(){
+				g.selectAll('circle').on("wheel",function(){
 				
 						 d3.select("rect" ).remove();
 						 
@@ -570,6 +570,8 @@ var histOutputBinding = new Shiny.OutputBinding();
 	
 	
 
+	
+	
 
 
 var x=g.selectAll('circle').attr("x");
@@ -592,7 +594,7 @@ var x=d3.select(this).attr("x");
          
 
 		 
-		 });
+		 }); 
 
 /*
 var zoom = d3.behavior.zoom()
@@ -627,6 +629,40 @@ var svg = d3.select('svg').call(zoom);
 			
 			  g.selectAll('circle')
 	  .attr('r',8);
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	   g.selectAll("circle").each(
+   
+   function(){
+   
+
+ if(d3.select(this).attr("x")>=x){
+
+
+ 
+	   alert(d3.select(this).attr("x"));
+	 
+	 
+	 
+
+		 
+		
+
+
+
+
+		}
+		 
+		 });
+	  
  
 			
 			 }else{
