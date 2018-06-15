@@ -1,0 +1,1 @@
+shiny::runApp("E:/M1/PJI/aweSOM-master/aweSOM-master/inst/shiny")
